@@ -11,7 +11,7 @@ import {
   Card,
 } from "react-bootstrap";
 import Message from "../components/Message";
-import { addToCart } from "../actions/cartActions";
+import { addToCart, removeFromCart } from "../actions/cartActions";
 
 function CartScreen() {
   const { productId } = useParams();
@@ -31,7 +31,7 @@ function CartScreen() {
   }, [dispatch, productId, qty]);
 
   const removeFromCartHandler = (id) => {
-    console.log("remove: ", id);
+    dispatch(removeFromCart(id));
   };
 
   const checkoutHandler = () => {
@@ -92,7 +92,7 @@ function CartScreen() {
           </ListGroup>
         )}
       </Col>
-      <Col md={4}>
+      <Col md={4} className="mt-2">
         <Card>
           <ListGroup variant="flush">
             <ListGroup.Item>
