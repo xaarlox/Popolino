@@ -5,11 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
-import { login } from "../actions/userActions";
+import { register } from "../actions/userActions";
 
-function LoginScreen() {
+function RegisterScreen() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -17,8 +20,8 @@ function LoginScreen() {
 
   const redirect = location.search ? location.search.split("=")[1] : "/";
 
-  const userLogin = useSelector((state) => state.userLogin);
-  const { error, loading, userInfo } = userLogin;
+  const userRegister = useSelector((state) => state.userRegister);
+  const { error, loading, userInfo } = userRegister;
 
   useEffect(() => {
     if (userInfo) {
@@ -28,15 +31,30 @@ function LoginScreen() {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(login(email, password));
+    if (password !== confirmPassword) {
+      setMessage("Паролі не співпали.");
+    } else {
+      dispatch(register(name, email, password));
+    }
   };
-
   return (
     <FormContainer>
-      <h1>Увійти</h1>
+      <h1>Зареєструватися</h1>
+      {message && <Message variant="danger">{message}</Message>}
       {error && <Message variant="danger">{error}</Message>}
       {loading && <Loader />}
       <Form onSubmit={submitHandler}>
+        <Form.Group controlId="name" className="mb-3">
+          <Form.Label className="fs-5">Ім'я</Form.Label>
+          <Form.Control
+            required
+            type="name"
+            placeholder="Введіть ваше..."
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={{ fontSize: "1rem" }}
+          ></Form.Control>
+        </Form.Group>
         <Form.Group controlId="email" className="mb-3">
           <Form.Label className="fs-5">Електронна пошта</Form.Label>
           <Form.Control
@@ -48,7 +66,7 @@ function LoginScreen() {
             style={{ fontSize: "1rem" }}
           ></Form.Control>
         </Form.Group>
-        <Form.Group controlId="password">
+        <Form.Group controlId="password" className="mb-3">
           <Form.Label className="fs-5">Пароль</Form.Label>
           <Form.Control
             required
@@ -59,15 +77,26 @@ function LoginScreen() {
             style={{ fontSize: "1rem" }}
           ></Form.Control>
         </Form.Group>
+        <Form.Group controlId="passwordConfirm">
+          <Form.Label className="fs-5">Повторити пароль</Form.Label>
+          <Form.Control
+            required
+            type="password"
+            placeholder="Повторіть пароль..."
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            style={{ fontSize: "1rem" }}
+          ></Form.Control>
+        </Form.Group>
         <Button type="submit" variant="primary" className="mt-4">
-          Увійти
+          Зареєструватися
         </Button>
       </Form>
       <Row className="py-3">
         <Col>
-          Новий користувач?{" "}
-          <Link to={redirect ? `/register?redirect=${redirect}` : "/register"}>
-            Реєстрація
+          Маєте акаунт?{" "}
+          <Link to={redirect ? `/login?redirect=${redirect}` : "/login"}>
+            Увійти
           </Link>
         </Col>
       </Row>
@@ -75,4 +104,4 @@ function LoginScreen() {
   );
 }
 
-export default LoginScreen;
+export default RegisterScreen;
