@@ -5,8 +5,16 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import CheckoutSteps from "../components/CheckoutSteps";
+import { createOrder } from "../actions/orderActions";
+import { ORDER_CREATE_RESET } from "../constants/orderConstants";
 
 function PlaceOrderScreen() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { order, error, success } = orderCreate;
+
   const cart = useSelector((state) => state.cart);
 
   const itemsPrice = cart.cartItems
@@ -23,8 +31,29 @@ function PlaceOrderScreen() {
     Number(taxPrice)
   ).toFixed(2);
 
+  if (!cart.paymentMethod) {
+    navigate("/payment");
+  }
+
+  useEffect(() => {
+    if (success) {
+      navigate(`/orders/${order._id}`);
+      dispatch({ type: ORDER_CREATE_RESET });
+    }
+  }, [success, navigate]);
+
   const placeOrder = () => {
-    console.log("Place Order");
+    dispatch(
+      createOrder({
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice,
+        shippingPrice,
+        taxPrice,
+        totalPrice,
+      })
+    );
   };
 
   return (
@@ -113,6 +142,9 @@ function PlaceOrderScreen() {
                   <Col>Всього: </Col>
                   <Col>${totalPrice}</Col>
                 </Row>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                {error && <Message variant="danger">{error}</Message>}
               </ListGroup.Item>
               <ListGroup.Item>
                 <Button
