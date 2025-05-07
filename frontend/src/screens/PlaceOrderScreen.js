@@ -79,38 +79,29 @@ function PlaceOrderScreen() {
                 {cart.paymentMethod}
               </p>
             </ListGroup.Item>
-            <ListGroup.Item>
-              <h2>Замовлені товари</h2>
-              {cart.cartItems.length === 0 ? (
-                <Message variant="info">Ваш кошик пустий.</Message>
-              ) : (
-                <ListGroup variant="flush">
-                  {cart.cartItems.map((item, index) => (
-                    <ListGroup.Item key={index}>
-                      <Row>
-                        <Col md={2}>
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fluid
-                            rounded
-                          />
-                        </Col>
-                        <Col>
-                          <Link to={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
-                        </Col>
-                        <Col md={4}>
-                          {item.qty} X ${item.price} = $
-                          {(item.qty * item.price).toFixed(2)}
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              )}
+            <ListGroup.Item className="border-0 pb-0">
+              <h2 className="mb-1">Замовлені товари</h2>
             </ListGroup.Item>
+            {cart.cartItems.length === 0 ? (
+              <Message variant="info">Ваш кошик пустий.</Message>
+            ) : (
+              cart.cartItems.map((item, index) => (
+                <ListGroup.Item key={index}>
+                  <Row>
+                    <Col md={2}>
+                      <Image src={item.image} alt={item.name} fluid rounded />
+                    </Col>
+                    <Col>
+                      <Link to={`/product/${item.product}`}>{item.name}</Link>
+                    </Col>
+                    <Col md={4}>
+                      {item.qty} X ${item.price} = $
+                      {(item.qty * item.price).toFixed(2)}
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              ))
+            )}
           </ListGroup>
         </Col>
         <Col md={4}>
@@ -143,14 +134,16 @@ function PlaceOrderScreen() {
                   <Col>${totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              <ListGroup.Item>
-                {error && <Message variant="danger">{error}</Message>}
-              </ListGroup.Item>
-              <ListGroup.Item>
+              {error && (
+                <ListGroup.Item>
+                  <Message variant="danger">{error}</Message>
+                </ListGroup.Item>
+              )}
+              <ListGroup.Item className="text-center">
                 <Button
                   type="button"
-                  className="btn-block"
-                  disabled={cart.cartItems === 0}
+                  className="btn-block px-5"
+                  disabled={cart.cartItems.length === 0}
                   onClick={placeOrder}
                 >
                   Зробити замовлення

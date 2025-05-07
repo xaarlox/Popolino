@@ -70,7 +70,9 @@ function CartScreen() {
                         )
                       }
                     >
-                      {[...Array(item.countInStock).keys()].map((x) => (
+                      {[
+                        ...Array(Math.max(0, Number(item.countInStock))).keys(),
+                      ].map((x) => (
                         <option key={x + 1} value={x + 1}>
                           {x + 1}
                         </option>

@@ -120,7 +120,7 @@ function ProductScreen() {
                     <Button
                       onClick={addToCartHandler}
                       className="btn-block"
-                      disabled={product.countInStock === 0}
+                      disabled={Number(product.countInStock) <= 0}
                       type="button"
                     >
                       Додати до кошика
