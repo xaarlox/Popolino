@@ -88,7 +88,7 @@ def getUserById(request, pk):
     return Response(serializer.data)
 
 
-api_view(['PUT'])
+@api_view(['PUT'])
 @permission_classes([IsAdminUser])
 def updateUser(request, pk):
     user = User.objects.get(id=pk)
