@@ -26,7 +26,7 @@ function UserListScreen() {
     } else {
       navigate("/login");
     }
-  }, [dispatch, navigate, successDelete]);
+  }, [dispatch, navigate, successDelete, userInfo]);
 
   const deleteHandler = (id) => {
     if (window.confirm("Ви впевнені, що хочете видалити цього користувача?")) {
