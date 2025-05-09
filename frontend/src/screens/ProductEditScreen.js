@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
@@ -18,6 +19,7 @@ function ProductEditScreen() {
   const [category, setCategory] = useState("");
   const [countInStock, setCountInStock] = useState(0);
   const [description, setDescription] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -66,6 +68,34 @@ function ProductEditScreen() {
       })
     );
   };
+
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("product_id", productId);
+      setUploading(true);
+      try {
+        const config = {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        };
+        const { data } = await axios.post(
+          "/api/products/upload/",
+          formData,
+          config
+        );
+        setImage(data);
+        setUploading(false);
+      } catch (error) {
+        console.error("Помилка завантаження:", error);
+        setUploading(false);
+      }
+    }
+  };
+
   return (
     <div>
       <Link to="/admin/productlist">Повернутися назад</Link>
@@ -103,11 +133,19 @@ function ProductEditScreen() {
               <Form.Label className="fs-5">Зображення</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Виберіть зображення..."
+                placeholder="Введіть URL зображення або залиште порожнім"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
                 style={{ fontSize: "1rem" }}
-              ></Form.Control>
+              />
+              <Form.Control
+                type="file"
+                label="Оберіть файл"
+                custom="true"
+                onChange={uploadFileHandler}
+                className="mt-2"
+              />
+              {uploading && <Loader />}
             </Form.Group>
             <Form.Group controlId="brand" className="mb-3">
               <Form.Label className="fs-5">Бренд</Form.Label>
