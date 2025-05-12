@@ -5,6 +5,7 @@ import { Table, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import Paginate from "../components/Paginate";
 import {
   listProducts,
   deleteProduct,
@@ -15,9 +16,12 @@ import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
 function ProductListScreen() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  let keyword = location.search;
 
   const productList = useSelector((state) => state.productList);
-  const { loading, error, products } = productList;
+  const { loading, error, products, pages, page } = productList;
 
   const productDelete = useSelector((state) => state.productDelete);
   const {
@@ -46,7 +50,7 @@ function ProductListScreen() {
     if (successCreate) {
       navigate(`/admin/product/${createdProduct._id}/edit`);
     } else {
-      dispatch(listProducts());
+      dispatch(listProducts(keyword));
     }
   }, [
     dispatch,
@@ -55,6 +59,7 @@ function ProductListScreen() {
     successDelete,
     successCreate,
     createProduct,
+    keyword,
   ]);
 
   const deleteHandler = (id) => {
@@ -124,6 +129,9 @@ function ProductListScreen() {
                 ))}
               </tbody>
             </Table>
+            <div className="my-4">
+              <Paginate pages={pages} page={page} isAdmin={true} />
+            </div>
           </div>
         </div>
       )}
