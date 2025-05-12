@@ -173,7 +173,7 @@ function ProductScreen() {
             <Col md={6}>
               <h4>Відгуки</h4>
               {product.reviews.length === 0 && (
-                <Message variant="info">На жаль, відгуків зе немає.</Message>
+                <Message variant="info">На жаль, відгуків ще немає.</Message>
               )}
               <ListGroup variant="flush">
                 {product.reviews.map((review) => (
@@ -186,16 +186,30 @@ function ProductScreen() {
                     </p>
                   </ListGroup.Item>
                 ))}
-                <ListGroup.Item>
-                  <h4>Написати відгук</h4>
-                  {loadingProductReview && <Loader />}
-                  {successProductReview && (
-                    <Message variant="success">Коментар опубліковано.</Message>
-                  )}
-                  {errorProductReview && (
-                    <Message variant="danger">{errorProductReview}</Message>
-                  )}
-                  {userInfo ? (
+              </ListGroup>
+
+              <h4 className="mt-4">Написати відгук</h4>
+
+              {!userInfo && (
+                <Message variant="info">
+                  Будь ласка, <Link to="/login">увійдіть</Link> в акаунт, щоб
+                  написати відгук.
+                </Message>
+              )}
+
+              {userInfo && (
+                <ListGroup variant="flush" className="mt-3">
+                  <ListGroup.Item>
+                    {loadingProductReview && <Loader />}
+                    {successProductReview && (
+                      <Message variant="success">
+                        Коментар опубліковано.
+                      </Message>
+                    )}
+                    {errorProductReview && (
+                      <Message variant="danger">{errorProductReview}</Message>
+                    )}
+
                     <Form onSubmit={submitHandler}>
                       <Form.Group controlId="rating">
                         <Form.Label>Оцінка</Form.Label>
@@ -212,15 +226,17 @@ function ProductScreen() {
                           <option value="5">5 - Відмінно</option>
                         </Form.Control>
                       </Form.Group>
+
                       <Form.Group controlId="comment" className="mt-2">
                         <Form.Label>Відгук</Form.Label>
                         <Form.Control
                           as="textarea"
-                          row="5"
+                          rows={5}
                           value={comment}
                           onChange={(e) => setComment(e.target.value)}
                         ></Form.Control>
                       </Form.Group>
+
                       <Button
                         disabled={loadingProductReview}
                         type="submit"
@@ -230,14 +246,9 @@ function ProductScreen() {
                         Опублікувати
                       </Button>
                     </Form>
-                  ) : (
-                    <Message variant="info">
-                      Будь ласка, <Link to="/login">увійдіть</Link> в акаунт,
-                      щоб написати відгук.
-                    </Message>
-                  )}
-                </ListGroup.Item>
-              </ListGroup>
+                  </ListGroup.Item>
+                </ListGroup>
+              )}
             </Col>
           </Row>
         </div>
